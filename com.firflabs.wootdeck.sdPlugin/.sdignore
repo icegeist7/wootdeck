@@ -1,0 +1,11 @@
+# Local/private files must never be bundled with the runtime.
+/logs/
+/internal/
+/tmp/
+/node_modules/
+**/__pycache__/
+*.pdb
+*.pyc
+*.pyo
+*.map
+*.log

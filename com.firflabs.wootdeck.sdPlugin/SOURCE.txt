@@ -1,0 +1,3 @@
+WootDeck: GPL-3.0-or-later. See LICENSE and NOTICE.md.
+This is a local development build. Distribute the matching WootDeck source and build scripts alongside any public binary release.
+Third-party source/license information: THIRD-PARTY-NOTICES.md and licenses/.

@@ -1,0 +1,102 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: Build and release
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.22.1'
+          package-manager-cache: false
+      - name: Set pinned Rust toolchain
+        shell: pwsh
+        run: |
+          $toolchain = (Select-String -LiteralPath native/rust-toolchain.toml -Pattern '^channel = "([^"]+)"$').Matches.Groups[1].Value
+          if (!$toolchain) { throw 'Rust toolchain is missing' }
+          rustup toolchain install $toolchain --profile minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Rust installation failed' }
+          "RUSTUP_TOOLCHAIN=$toolchain" >> $env:GITHUB_ENV
+      - run: npm ci
+      - name: Reject private or local files in the Git index
+        shell: pwsh
+        run: ./scripts/check-release-files.ps1 -CheckIndex
+      - name: Check versions and licensing metadata
+        run: node scripts/check-release.mjs
+      - run: npm run typecheck
+      - run: npm test
+      - name: Test native helper without hardware
+        run: cargo test --locked --manifest-path native/Cargo.toml
+      - name: Fetch checksum-pinned Wooting SDK
+        shell: pwsh
+        run: |
+          ./scripts/prepare-sdk.ps1
+          "WOOTING_SDK_DLL=$env:WOOTING_SDK_DLL" >> $env:GITHUB_ENV
+      - run: npm run build
+      - name: Test simulated Stream Deck interactions
+        run: node tests/integration/simulated/cycle-press-smoke.mjs
+      - run: node tests/integration/simulated/cycle-feedback-smoke.mjs
+      - run: node tests/integration/simulated/custom-features-smoke.mjs
+      - run: npm run validate
+      - run: npm run pack
+      - name: Prepare plugin, source archive and checksums
+        run: node scripts/release-assets.mjs
+      - name: Audit release archive contents
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          ./scripts/check-release-files.ps1 -SourceArchive "tmp/dist/WootDeck-$version-source.zip" -PluginArchive "tmp/dist/WootDeck-$version-windows-x64.streamDeckPlugin"
+      - name: Upload downloads
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: WootDeck-windows-x64-${{ github.sha }}
+          path: |
+            tmp/dist/WootDeck-*.streamDeckPlugin
+            tmp/dist/WootDeck-*-source.zip
+            tmp/dist/SHA256SUMS.txt
+            tmp/dist/LICENSE.txt
+            tmp/dist/NOTICE.md
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: WootDeck-windows-x64-${{ github.sha }}
+          path: downloads
+      - name: Publish release downloads
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          flags=(--verify-tag --title "WootDeck ${RELEASE_TAG}" --generate-notes)
+          if [[ "$RELEASE_TAG" == v0.* ]]; then flags+=(--prerelease); fi
+          gh release create "$RELEASE_TAG" "${flags[@]}" downloads/*

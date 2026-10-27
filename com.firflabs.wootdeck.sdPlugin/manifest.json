@@ -1,0 +1,107 @@
+{
+  "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+  "UUID": "com.firflabs.wootdeck",
+  "Name": "WootDeck",
+  "Description": "Switch Wooting profiles and display the actual profile and physical key depth.",
+  "Author": "FIRF Labs",
+  "Version": "0.1.62.0",
+  "SDKVersion": 3,
+  "CodePath": "bin/plugin.js",
+  "Nodejs": {
+    "Version": "24"
+  },
+  "Icon": "imgs/plugin",
+  "Category": "WootDeck",
+  "CategoryIcon": "imgs/category",
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "Software": {
+    "MinimumVersion": "7.1"
+  },
+  "Actions": [
+    {
+      "UUID": "com.firflabs.wootdeck.select",
+      "Name": "Select Profile",
+      "Tooltip": "Activate an onboard profile and highlight it after readback.",
+      "Icon": "imgs/select",
+      "PropertyInspectorPath": "ui/settings.html",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/select-state",
+          "ShowTitle": false
+        }
+      ]
+    },
+    {
+      "UUID": "com.firflabs.wootdeck.cycle",
+      "Name": "Cycle Profiles",
+      "Tooltip": "Select the next or previous onboard profile.",
+      "Icon": "imgs/cycle",
+      "PropertyInspectorPath": "ui/settings.html",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/cycle-state",
+          "ShowTitle": false
+        }
+      ]
+    },
+    {
+      "UUID": "com.firflabs.wootdeck.toggle",
+      "Name": "Toggle Profiles",
+      "Tooltip": "Toggle between two configured onboard profiles.",
+      "Icon": "imgs/toggle",
+      "PropertyInspectorPath": "ui/settings.html",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/toggle-state",
+          "ShowTitle": false
+        }
+      ]
+    },
+    {
+      "UUID": "com.firflabs.wootdeck.current",
+      "Name": "Current Profile",
+      "Tooltip": "Display the actual active keyboard profile, including external changes.",
+      "Icon": "imgs/current",
+      "PropertyInspectorPath": "ui/settings.html",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/current-state",
+          "ShowTitle": false
+        }
+      ]
+    },
+    {
+      "UUID": "com.firflabs.wootdeck.depth",
+      "Name": "Key Depth",
+      "Tooltip": "Display physical analog travel. Press to reset the observed peak.",
+      "Icon": "imgs/depth",
+      "PropertyInspectorPath": "ui/settings.html",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/depth-state",
+          "ShowTitle": false
+        }
+      ]
+    }
+  ]
+}

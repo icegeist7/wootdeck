@@ -1,0 +1,10 @@
+# Local tools, builds, caches, captures and previews.
+/tmp/
+# Private planning, investigations and detailed internal documentation.
+/internal/
+/node_modules/
+**/__pycache__/
+*.py[cod]
+# Required runtime outputs inside the development plugin installation.
+/com.firflabs.wootdeck.sdPlugin/bin/
+/com.firflabs.wootdeck.sdPlugin/logs/

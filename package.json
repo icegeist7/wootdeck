@@ -1,0 +1,36 @@
+{
+  "name": "wootdeck",
+  "version": "0.1.62",
+  "private": true,
+  "type": "module",
+  "description": "Wooting keyboard controls and physical key telemetry for Stream Deck",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/unit/*.test.ts",
+    "validate": "streamdeck validate com.firflabs.wootdeck.sdPlugin",
+    "pack": "streamdeck pack com.firflabs.wootdeck.sdPlugin --output tmp/dist --force --no-file-list",
+    "check-release": "node scripts/check-release.mjs",
+    "test:integration": "node tests/integration/simulated/cycle-press-smoke.mjs && node tests/integration/simulated/cycle-feedback-smoke.mjs && node tests/integration/simulated/custom-features-smoke.mjs",
+    "preview": "node --import tsx scripts/previews/preview-themes.ts",
+    "clean": "node scripts/clean.mjs"
+  },
+  "dependencies": {
+    "@elgato/streamdeck": "3.0.2"
+  },
+  "overrides": {
+    "zod": "4.6.6"
+  },
+  "devDependencies": {
+    "@elgato/cli": "1.10.3",
+    "@resvg/resvg-js": "2.6.2",
+    "@types/node": "24.19.2",
+    "esbuild": "0.25.12",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  },
+  "license": "GPL-3.0-or-later",
+  "engines": {
+    "node": ">=24 <25"
+  }
+}

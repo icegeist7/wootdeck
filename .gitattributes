@@ -1,0 +1,13 @@
+* text=auto
+*.ps1 text eol=lf
+*.mjs text eol=lf
+*.ts text eol=lf
+*.rs text eol=lf
+*.yml text eol=lf
+# Keep local/private material out of source archives, even if staged accidentally.
+/tmp export-ignore
+/internal export-ignore
+/node_modules export-ignore
+**/__pycache__ export-ignore
+/com.firflabs.wootdeck.sdPlugin/bin export-ignore
+/com.firflabs.wootdeck.sdPlugin/logs export-ignore

@@ -1,0 +1,27 @@
+[
+  {
+    "name": "@elgato/schemas",
+    "version": "0.5.2",
+    "license": "MIT"
+  },
+  {
+    "name": "@elgato/streamdeck",
+    "version": "3.0.2",
+    "license": "MIT"
+  },
+  {
+    "name": "@elgato/utils",
+    "version": "0.6.1",
+    "license": "MIT"
+  },
+  {
+    "name": "ws",
+    "version": "8.22.0",
+    "license": "MIT"
+  },
+  {
+    "name": "zod",
+    "version": "4.6.6",
+    "license": "MIT"
+  }
+]

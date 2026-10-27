@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>WootDeck settings</title>
+  <style>
+    :root { color-scheme: dark; font: 12px 'Segoe UI',sans-serif; color: #ddd; background: #2d2d2d; }
+    body { margin: 14px 16px; }
+    h1 { font-size: 15px; color: #7ee6bd; margin: 0 0 12px; }
+    label { display: block; margin: 12px 0 5px; color: #bdbdbd; }
+    select,input,button { box-sizing: border-box; width: 100%; min-height: 30px; border: 1px solid #555; border-radius: 4px; background: #393939; color: #eee; padding: 5px 8px; font: inherit; }
+    select:focus,input:focus,button:focus { outline: 2px solid #78d9b5; outline-offset: 1px; }
+    button { margin-top: 12px; cursor: pointer; }
+    p { line-height: 1.5; color: #aaa; margin: 9px 0; }
+    #status { border-left: 3px solid #7ee6bd; padding: 7px 10px; background: #252525; color: #ddd; }
+    #error { color: #ffbd88; }
+    .hidden { display: none !important; }
+    details.settings-section { margin: 9px 0; border: 1px solid #444; border-radius: 6px; background: #282828; }
+    summary { padding: 10px 12px; cursor: pointer; font-weight: 600; color: #eee; }
+    summary:focus-visible { outline: 2px solid #78d9b5; outline-offset: 2px; }
+    details[open] > summary { border-bottom: 1px solid #414141; margin-bottom: 4px; }
+    .section-body { padding: 0 12px 12px; }
+    .color-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 12px; }
+    .button-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; margin-top: 12px; }
+    .button-grid button { margin-top: 0; }
+    button:disabled { opacity: 0.45; cursor: default; }
+    input[type="color"] { height: 32px; padding: 3px; }
+    .checkbox-row { display: flex; align-items: center; gap: 8px; }
+    input[type="checkbox"] { width: 16px; height: 16px; min-height: 0; padding: 0; flex: 0 0 auto; accent-color: #78d9b5; }
+    .section-label { margin: 16px 0 0; padding-top: 10px; border-top: 1px solid #414141; font-weight: 600; color: #ddd; }
+    #error:empty { display: none; }
+    .key-reading { display: grid; grid-template-columns: 74px 1fr 56px; gap: 8px; align-items: center; margin: 7px 0; }
+    .key-reading progress { width: 100%; height: 9px; accent-color: #7ee6bd; }
+    .key-reading span:last-child { text-align: right; color: #7ee6bd; }
+    small { display: block; color: #999; margin-top: 5px; line-height: 1.4; }
+  </style>
+</head>
+<body>
+  <h1>WootDeck</h1>
+  <div id="status" role="status">Connecting to plugin…</div>
+  <div id="error" role="alert"></div>
+  <details class="settings-section" id="action-section" open>
+    <summary><span id="action-summary">Action &amp; keyboard</span></summary>
+    <div class="section-body">
+  <label for="keyboard">Keyboard</label>
+  <select id="keyboard"><option value="">Waiting for keyboard…</option></select>
+  <div id="profile-group" class="hidden">
+    <label for="profile">Onboard profile</label>
+    <select id="profile"><option value="">Choose a profile</option></select>
+    <small>Re-select the profile if it is renamed or moved in Wootility.</small>
+  </div>
+  <div id="cycle-group" class="hidden">
+    <label for="direction">Short press direction</label>
+    <select id="direction"><option value="1">Next profile</option><option value="-1">Previous profile</option></select>
+    <label for="long-direction">Long press direction</label>
+    <select id="long-direction"><option value="1">Next profile</option><option value="-1">Previous profile</option></select>
+    <label for="long-press-ms">Long press after (ms)</label>
+    <input id="long-press-ms" type="number" min="200" max="2000" step="50" value="500">
+    <small>Short press switches on release. Long press switches once at the hold duration, without an extra switch on release. Run action and Multi Actions use the short direction.</small>
+    <label for="order">Cycle order (optional)</label>
+    <input id="order" placeholder="1,2,3,4" maxlength="32">
+    <small>Onboard slot numbers, separated by commas. Empty uses all onboard profiles.</small>
+  </div>
+  <div id="toggle-group" class="hidden">
+    <label for="toggle-a">Profile A</label><select id="toggle-a"><option value="">Choose profile A</option></select>
+    <label for="toggle-b">Profile B</label><select id="toggle-b"><option value="">Choose profile B</option></select>
+    <small>From A, switch to B; otherwise switch to A. Choose two different profiles. Re-select profiles after renaming or moving them.</small>
+  </div>
+  <div id="depth-group" class="hidden">
+    <label for="key">Physical key</label>
+    <select id="key">
+      <option value="any">Any Key</option>
+      <option value="26">W</option><option value="4">A</option><option value="22">S</option><option value="7">D</option>
+      <option value="44">Space</option><option value="225">Left Shift</option><option value="224">Left Ctrl</option><option value="custom">Custom USB HID keycode</option>
+    </select>
+    <div id="custom-group" class="hidden"><label for="custom">USB HID keycode (decimal)</label><input id="custom" type="number" min="0" max="65535" step="1"></div>
+    <div id="key-label-group"><label for="key-label">Key label</label><input id="key-label" maxlength="20" placeholder="W"></div>
+    <div id="any-filter-group" class="hidden">
+      <label for="any-filter">Any Key filter</label>
+      <select id="any-filter"><option value="all">All keys</option><option value="wasd">WASD only</option><option value="no-modifiers">Exclude modifiers</option><option value="custom">Custom key list</option></select>
+      <div id="any-list-group" class="hidden"><label for="any-list">Allowed physical keys</label><input id="any-list" maxlength="512" placeholder="W, A, S, D, Space, L Shift">
+      <small>Comma-separated physical USB HID names, or HID 26 / #26 for a code. Up to 64 keys. Letters refer to physical US HID positions.</small></div>
+    </div>
+  </div>
+  <button id="test" class="hidden">Run action</button>
+    </div>
+  </details>
+  <details class="settings-section" id="display-section">
+    <summary>Display</summary>
+    <div class="section-body">
+  <label id="display-label-title" for="label">Custom display label (optional)</label><input id="label" maxlength="40">
+  <label for="font-family">Font</label>
+  <select id="font-family">
+    <option value="theme">Color Theme default</option>
+    <option value="segoe">Segoe UI</option><option value="bahnschrift">Bahnschrift</option>
+    <option value="arial">Arial</option><option value="verdana">Verdana</option>
+    <option value="tahoma">Tahoma</option><option value="consolas">Consolas</option>
+  </select>
+  <label for="font-weight">Font weight</label>
+  <select id="font-weight"><option value="normal">Normal</option><option value="bold" selected>Bold</option></select>
+  <label for="text-color-mode">Text color</label>
+  <select id="text-color-mode"><option value="theme">Theme default / automatic contrast</option><option value="custom">Custom color</option></select>
+  <div id="text-color-group" class="hidden">
+    <label for="text-color">Custom text color</label><input id="text-color" type="color" value="#f3f7fc">
+    <p>Applies to labels, pressure values, peak and Any Key text. Profile box text retains its separate state colors.</p>
+  </div>
+  <div id="depth-display-group" class="hidden">
+    <div id="peak-group">
+      <label class="checkbox-row" for="show-peak"><input id="show-peak" type="checkbox">Show peak value</label>
+      <div id="peak-reset-group">
+        <label for="peak-reset">Peak reset after (seconds)</label>
+        <input id="peak-reset" type="number" min="0" max="3600" step="0.1" value="0">
+        <p>Hold the latest maximum for this duration, then reset to the current depth. A higher value restarts the hold. 0 = manual reset only. Press the Stream Deck key to reset immediately.</p>
+      </div>
+    </div>
+    <label class="checkbox-row" for="show-threshold"><input id="show-threshold" type="checkbox" checked>Show configured actuation point</label>
+    <div id="threshold-marker-colors" class="hidden">
+      <label for="threshold-color-mode">Marker color</label>
+      <select id="threshold-color-mode"><option value="theme">Color Theme default</option><option value="custom">Custom color</option></select>
+      <div id="threshold-color-group" class="hidden"><label for="threshold-color">Custom marker color</label><input id="threshold-color" type="color" value="#ffffff"></div>
+    </div>
+    <div id="threshold-group" class="hidden">
+      <div id="threshold-status" class="hint">Reading keyboard configuration...</div>
+      <button id="refresh-actuation" type="button">Refresh actuation points</button>
+      <div class="hint">Read from the active keyboard profile, individually per physical key. Refreshes on profile changes and every 60 seconds while enabled. The marker shows initial actuation, not the moving Rapid Trigger reset point.</div>
+    </div>
+    <div id="any-percent-group" class="hidden">
+      <label class="checkbox-row" for="any-percent"><input id="any-percent" type="checkbox" checked>Show percentage below bars</label>
+    </div>
+    <label for="depth-unit">Depth unit</label>
+    <select id="depth-unit"><option value="percent">Percent (%)</option><option value="mm">Millimeters (mm)</option></select>
+    <div id="travel-group" class="hidden">
+      <label for="full-travel">Full travel (mm)</label>
+      <input id="full-travel" type="number" min="0.1" max="10" step="0.1" value="4.0">
+      <small>Estimated distance = normalized depth × full travel. Default: 4.0 mm. Set this to your switches' travel; this is not a calibrated distance measurement.</small>
+    </div>
+    <p>The selected unit applies to the single-key value and peak, and to the Any Key list below. Any Key tiles show vertical bars and normalized percentages.</p>
+  </div>
+    </div>
+  </details>
+  <details class="settings-section" id="colors-section">
+    <summary>Color Themes &amp; background</summary>
+    <div class="section-body">
+  <label for="theme">Color Themes</label>
+  <select id="theme">
+    <option value="amber">Amber Console</option><option value="copper">Copper</option>
+    <option value="ice">Ice Blue</option><option value="icewhite" selected>Ice White</option>
+    <option value="mint">Mint</option><option value="mono">Monochrome</option>
+    <option value="rose">Rose</option><option value="violet">Violet</option>
+  </select>
+  <label for="background-mode">Normal / inactive background</label>
+  <select id="background-mode"><option value="theme">Theme default</option><option value="custom">Custom color</option></select>
+  <div id="background-color-group" class="hidden">
+    <label for="background-color">Normal background color</label><input id="background-color" type="color">
+    <small>Saved per action. Text uses black or white for contrast. An enabled Key Depth gradient takes priority while depth data is available.</small>
+  </div>
+  <label for="active-background-mode">Active background</label>
+  <select id="active-background-mode"><option value="inherit">Same as normal</option><option value="custom">Custom color</option></select>
+  <div id="active-background-color-group" class="hidden">
+    <label for="active-background-color">Active background color</label><input id="active-background-color" type="color">
+    <small>Active means the observed profile is active, or a monitored key is pressed for Key Depth. Text contrast adapts automatically. Depth background gradients take priority when enabled.</small>
+  </div>
+  <div id="depth-gradient-group" class="hidden">
+    <label for="depth-background">Depth background</label>
+    <select id="depth-background">
+      <option value="theme">Theme background</option>
+      <option value="two">Depth gradient — 2 colors</option>
+      <option value="three">Depth gradient — 3 colors</option>
+      <option value="threshold">Actuation threshold — before / after</option>
+    </select>
+    <div id="depth-colors-group" class="hidden">
+      <label id="depth-color-low-label" for="depth-color-low">Color at 0%</label><input id="depth-color-low" type="color" value="#14352b">
+      <div id="depth-color-mid-group" class="hidden"><label for="depth-color-mid">Color at 50%</label><input id="depth-color-mid" type="color" value="#b77916"></div>
+      <label id="depth-color-high-label" for="depth-color-high">Color at 100%</label><input id="depth-color-high" type="color" value="#bf2942">
+      <small>Gradients blend by depth; Any Key uses the deepest pressed key. Threshold mode switches instantly at the configured actuation point. Any Key switches the background when any filtered pressed key reaches its own point. Missing configuration uses the static background.</small>
+    </div>
+    <label for="depth-foreground">Depth foreground</label>
+    <select id="depth-foreground">
+      <option value="theme">Theme bar color</option>
+      <option value="two">Depth gradient — 2 colors</option>
+      <option value="three">Depth gradient — 3 colors</option>
+      <option value="threshold">Actuation threshold — before / after</option>
+    </select>
+    <div id="foreground-colors-group" class="hidden">
+      <label id="foreground-color-low-label" for="foreground-color-low">Bar color at 0%</label><input id="foreground-color-low" type="color" value="#39d98a">
+      <div id="foreground-color-mid-group" class="hidden"><label for="foreground-color-mid">Bar color at 50%</label><input id="foreground-color-mid" type="color" value="#ffbd4a"></div>
+      <label id="foreground-color-high-label" for="foreground-color-high">Bar color at 100%</label><input id="foreground-color-high" type="color" value="#ff4059">
+      <small>Colors only the filled bar. Threshold mode uses each key's configured actuation point, independently of marker visibility. At or above the point uses the after color. Missing configuration uses the theme bar color. Foreground and background modes can be combined independently.</small>
+    </div>
+  </div>
+    </div>
+  </details>
+  <details class="settings-section" id="profile-colors-group">
+    <summary>Profile box</summary>
+    <div class="section-body">
+    <label for="box-theme">Box Theme</label>
+    <select id="box-theme">
+      <option value="solid">Solid</option>
+      <option value="corners">Corner borders</option>
+      <option value="top-bottom">Top and bottom borders</option>
+      <option value="left-right">Left and right borders</option>
+    </select>
+    <label id="box-pixels-label" for="box-pixels">Corner radius (px)</label>
+    <input id="box-pixels" type="number" min="0" max="10" step="0.5">
+    <small id="box-pixels-hint">Pixels at standard 72-pixel key size.</small>
+    <small>Applies to the profile box. Outline styles use the box color for their lines and keep the tile background visible. Colors and shape are independent.</small>
+    <div class="section-label">State colors</div>
+    <label for="profile-color-mode">Profile state colors</label>
+    <select id="profile-color-mode"><option value="theme">Theme defaults</option><option value="custom">Custom colors</option></select>
+    <div id="profile-custom-colors" class="color-grid hidden">
+      <div><label for="profile-active-background">Active box</label><input id="profile-active-background" type="color"></div>
+      <div><label for="profile-active-text">Active text</label><input id="profile-active-text" type="color"></div>
+      <div><label for="profile-inactive-background">Inactive box</label><input id="profile-inactive-background" type="color"></div>
+      <div><label for="profile-inactive-text">Inactive text</label><input id="profile-inactive-text" type="color"></div>
+      <div><label for="profile-pending-background">Pending box (profile switch)</label><input id="profile-pending-background" type="color"></div>
+      <div><label for="profile-pending-text">Pending text / spinner</label><input id="profile-pending-text" type="color"></div>
+    </div>
+    <small>Colors are saved per action. Only the pressed Select/Cycle button previews the target with pending colors and a spinner. Other buttons show the observed state until confirmation. Pending defaults to blue; failures show an error on the pressed action.</small>
+    </div>
+  </details>
+  <details class="settings-section hidden" id="any-group">
+    <summary>Live key readings</summary>
+    <div class="section-body">
+      <p>The key shows up to three vertical bars side by side. Each bar fills from top to bottom, with the key name above and percentage below. The deepest presses appear first; extra keys are omitted. All active keys and their depths are listed below.</p>
+      <div id="any-status" role="status">Waiting for analog data…</div>
+      <div id="any-readings" aria-live="off"></div>
+    </div>
+  </details>
+  <details class="settings-section" id="animation-section">
+    <summary>Animation</summary>
+    <div class="section-body">
+      <label for="animation-mode">Transition</label>
+      <select id="animation-mode"><option value="none">None</option><option value="fade">Fade out / fade in</option><option value="crossfade" selected>Crossfade</option></select>
+      <div id="animation-options" class="hidden">
+        <label for="animation-duration">Total duration (ms)</label><input id="animation-duration" type="number" min="100" max="1500" step="50" value="200">
+        <label class="checkbox-row" for="animate-state"><input id="animate-state" type="checkbox" checked>On state changes</label>
+        <label class="checkbox-row" for="animate-press"><input id="animate-press" type="checkbox">On key press</label>
+        <small>Applies to this key. State changes include profiles, connection/error states, and pressed/released keys. Continuous depth values and spinner frames do not restart the animation. Hardware commands run immediately; only the visual transition is animated.</small>
+      </div>
+    </div>
+  </details>
+  <details class="settings-section" id="custom-themes-section">
+    <summary>Custom Themes</summary>
+    <div class="section-body">
+      <label for="custom-theme">Saved design</label><select id="custom-theme"><option value="">Choose a Custom Theme</option></select>
+      <label for="custom-theme-name">Theme name</label><input id="custom-theme-name" maxlength="40" placeholder="My design">
+      <div class="button-grid"><button id="theme-save">Save as new</button><button id="theme-update" disabled>Update selected</button><button id="theme-apply" disabled>Apply to this key</button><button id="theme-delete" disabled>Delete selected</button></div>
+      <p id="theme-message" role="status"></p>
+      <small>Stored plugin-wide. Includes fonts, colors, box style and display markers. Keyboard, profile, key filters, labels and travel calibration stay unchanged. Applying copies the design; later preset edits do not change other keys automatically.</small>
+    </div>
+  </details>
+  <details class="settings-section" id="device-section">
+    <summary>Device details</summary>
+    <div class="section-body">
+  <p id="details"></p>
+  <button id="refresh">Refresh devices</button>
+  <small>Wootility and its Background Service can remain running.</small>
+    </div>
+  </details>
+  <script src="settings.js"></script>
+</body>
+</html>
